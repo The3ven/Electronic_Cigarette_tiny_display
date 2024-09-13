@@ -1,305 +1,201 @@
-#include <Arduino.h>
+#include "pin_Factory.h"
 
 #define DISPLAY_DURTION 1000
 // #define DEBUG 1
 
-#define SEG_PIN1 D1
-#define SEG_PIN2 D2
-#define SEG_PIN3 D5
-#define SEG_PIN4 D6
-#define SEG_PIN5 D7
-#define SEG_PIN6 D4
+int pins[6] = {D1, D2, D5, D6, D7, D4};
 
 int loop_delay = 1000;
 
-void e_1()
+void turnOn_segment(int PIN_HIGH, int PIN_LOW)
 {
-    // 6 HIGHT
-    // 3 LOW
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, OUTPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    digitalWrite(SEG_PIN6, HIGH);
-    digitalWrite(SEG_PIN3, LOW);
+    for (int i = 0; i < 6; i++)
+    {
+        if (pins[i] != PIN_HIGH || pins[i] != PIN_LOW)
+        {
+            pinMode(pins[i], INPUT);
+        }
+        if (pins[i] == PIN_LOW)
+        {
+            pinMode(PIN_LOW, OUTPUT);
+            digitalWrite(PIN_LOW, LOW);
+        }
+
+        if (pins[i] == PIN_HIGH)
+        {
+            pinMode(PIN_HIGH, OUTPUT);
+            digitalWrite(PIN_HIGH, HIGH);
+        }
+    }
 }
 
-void f_1()
+void Random_effect(int time)
 {
-    // 1 HIGH
-    // 4 LOW
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    digitalWrite(SEG_PIN1, HIGH);
-    digitalWrite(SEG_PIN4, LOW);
+    unsigned long t = millis();
+    int old_segment_number = -1;
+    while (millis() - t < time / 2)
+    {
+        int segment_number = random(0, 20);
+        while (segment_number == old_segment_number)
+        {
+            segment_number = random(0, 20);
+        }
+        segment_pin PIN = Random_segment_pin(segment_number);
+        for (int p = 0; p < 6; p++)
+        {
+            if (PIN.HIGH_PIN != pins[p] || PIN.LOW_PIN != pins[p])
+            {
+                pinMode(pins[p], INPUT);
+            }
+        }
+        pinMode(PIN.LOW_PIN, OUTPUT);
+        pinMode(PIN.HIGH_PIN, OUTPUT);
+        digitalWrite(PIN.LOW_PIN, LOW);
+        t = millis();
+        while (millis() - t < time / 2)
+        {
+            for (int i = 0; i < 255; i++)
+            {
+                analogWrite(PIN.HIGH_PIN, i);
+                delay(1);
+            }
+            for (int i = 255; i > 0; i--)
+            {
+                analogWrite(PIN.HIGH_PIN, i);
+                delay(1);
+            }
+        }
+    }
 }
 
-void a_2()
+segment_pin Random_segment_pin(int choice)
 {
-    // 1 LOW
-    // 2 HIGH
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    digitalWrite(SEG_PIN1, LOW);
-    digitalWrite(SEG_PIN2, HIGH);
-}
+    segment_pin pin;
 
-void b_2()
-{
-    // 1 LOW
-    // 3 HIGH
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    digitalWrite(SEG_PIN1, LOW);
-    digitalWrite(SEG_PIN3, HIGH);
-}
-
-void c_2()
-{
-    // 1 LOW
-    // 4 HIGH
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    digitalWrite(SEG_PIN1, LOW);
-    digitalWrite(SEG_PIN4, HIGH);
-}
-
-void d_2()
-{
-    // 1 LOW
-    // 5 HIGH
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    pinMode(SEG_PIN5, OUTPUT);
-    digitalWrite(SEG_PIN1, LOW);
-    digitalWrite(SEG_PIN5, HIGH);
-}
-
-void e_2()
-{
-    // 1 LOW
-    // 6 HIGH
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    pinMode(SEG_PIN6, OUTPUT);
-    digitalWrite(SEG_PIN1, LOW);
-    digitalWrite(SEG_PIN6, HIGH);
-}
-
-void f_2()
-{
-    // 1 HIGH
-    // 2 LOW
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    digitalWrite(SEG_PIN1, HIGH);
-    digitalWrite(SEG_PIN2, LOW);
-}
-
-void g_2()
-{
-    // 2 LOW
-    // 3 HIGHT
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    digitalWrite(SEG_PIN2, LOW);
-    digitalWrite(SEG_PIN3, HIGH);
-}
-
-void a_3()
-{
-    // 2 LOW
-    // 4 HIGHT
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    digitalWrite(SEG_PIN2, LOW);
-    digitalWrite(SEG_PIN4, HIGH);
-}
-
-void b_3()
-{
-    // 2 LOW
-    // 5 HIGH
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    pinMode(SEG_PIN5, OUTPUT);
-    digitalWrite(SEG_PIN2, LOW);
-    digitalWrite(SEG_PIN5, HIGH);
-}
-void c_3()
-{
-    // 2 LOW
-    // 6 HIGH
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    pinMode(SEG_PIN6, OUTPUT);
-    digitalWrite(SEG_PIN2, LOW);
-    digitalWrite(SEG_PIN6, HIGH);
-}
-
-void d_3()
-{
-    // 3 LOW
-    // 1 HIGH
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    pinMode(SEG_PIN1, OUTPUT);
-    digitalWrite(SEG_PIN3, LOW);
-    digitalWrite(SEG_PIN1, HIGH);
-}
-
-void e_3()
-{
-    // 2 HIGH
-    // 3 LOW
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    digitalWrite(SEG_PIN2, HIGH);
-    digitalWrite(SEG_PIN3, LOW);
-}
-
-void f_3()
-{
-    // 3 LOW
-    // 4 HIGH
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    digitalWrite(SEG_PIN3, LOW);
-    digitalWrite(SEG_PIN4, HIGH);
-}
-
-void g_3()
-{
-    // 3 LOW
-    // 5 HIGH
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    pinMode(SEG_PIN5, OUTPUT);
-    digitalWrite(SEG_PIN3, LOW);
-    digitalWrite(SEG_PIN5, HIGH);
+    switch (choice)
+    {
+    case 1:
+        pin.HIGH_PIN = e_1_pin.HIGH_PIN;
+        pin.LOW_PIN = e_1_pin.LOW_PIN;
+        return pin;
+    case 2:
+        pin.HIGH_PIN = f_1_pin.HIGH_PIN;
+        pin.LOW_PIN = f_1_pin.LOW_PIN;
+        return pin;
+    case 3:
+        pin.HIGH_PIN = a_2_pin.HIGH_PIN;
+        pin.LOW_PIN = a_2_pin.LOW_PIN;
+        return pin;
+    case 4:
+        pin.HIGH_PIN = b_2_pin.HIGH_PIN;
+        pin.LOW_PIN = b_2_pin.LOW_PIN;
+        return pin;
+    case 5:
+        pin.HIGH_PIN = c_2_pin.HIGH_PIN;
+        pin.LOW_PIN = c_2_pin.LOW_PIN;
+        return pin;
+    case 6:
+        pin.HIGH_PIN = d_2_pin.HIGH_PIN;
+        pin.LOW_PIN = d_2_pin.LOW_PIN;
+        return pin;
+    case 7:
+        pin.HIGH_PIN = e_2_pin.HIGH_PIN;
+        pin.LOW_PIN = e_2_pin.LOW_PIN;
+        return pin;
+    case 8:
+        pin.HIGH_PIN = f_2_pin.HIGH_PIN;
+        pin.LOW_PIN = f_2_pin.LOW_PIN;
+        return pin;
+    case 9:
+        pin.HIGH_PIN = g_2_pin.HIGH_PIN;
+        pin.LOW_PIN = g_2_pin.LOW_PIN;
+        return pin;
+    case 10:
+        pin.HIGH_PIN = a_3_pin.HIGH_PIN;
+        pin.LOW_PIN = a_3_pin.LOW_PIN;
+        return pin;
+    case 11:
+        pin.HIGH_PIN = b_3_pin.HIGH_PIN;
+        pin.LOW_PIN = b_3_pin.LOW_PIN;
+        return pin;
+    case 12:
+        pin.HIGH_PIN = c_3_pin.HIGH_PIN;
+        pin.LOW_PIN = c_3_pin.LOW_PIN;
+        return pin;
+    case 13:
+        pin.HIGH_PIN = d_3_pin.HIGH_PIN;
+        pin.LOW_PIN = d_3_pin.LOW_PIN;
+        return pin;
+    case 14:
+        pin.HIGH_PIN = e_3_pin.HIGH_PIN;
+        pin.LOW_PIN = e_3_pin.LOW_PIN;
+        return pin;
+    case 15:
+        pin.HIGH_PIN = f_3_pin.HIGH_PIN;
+        pin.LOW_PIN = f_3_pin.LOW_PIN;
+        return pin;
+    case 16:
+        pin.HIGH_PIN = g_3_pin.HIGH_PIN;
+        pin.LOW_PIN = g_3_pin.LOW_PIN;
+        return pin;
+    case 17:
+        pin.HIGH_PIN = power_percentage_pin.HIGH_PIN;
+        pin.LOW_PIN = power_percentage_pin.LOW_PIN;
+        return pin;
+    case 18:
+        pin.HIGH_PIN = power_icon_pin.HIGH_PIN;
+        pin.LOW_PIN = power_icon_pin.LOW_PIN;
+        return pin;
+    case 19:
+        pin.HIGH_PIN = drop_icon_pin.HIGH_PIN;
+        pin.LOW_PIN = drop_icon_pin.LOW_PIN;
+        return pin;
+    case 20:
+        pin.HIGH_PIN = drop_percentage_pin.HIGH_PIN;
+        pin.LOW_PIN = drop_percentage_pin.LOW_PIN;
+        return pin;
+    }
+    pin.HIGH_PIN = -1;
+    pin.LOW_PIN = -1;
+    return pin;
 }
 
 void Power_percentage()
 {
     // 2 HIGH
     // 4 LOW
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN2, OUTPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    digitalWrite(SEG_PIN2, HIGH);
-    digitalWrite(SEG_PIN4, LOW);
+    turnOn_segment(power_percentage_pin.HIGH_PIN, power_percentage_pin.LOW_PIN);
 }
 
 void drop_percentage()
 {
     // 4 LOW
     // 5 HIGH
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    pinMode(SEG_PIN5, OUTPUT);
-    digitalWrite(SEG_PIN4, LOW);
-    digitalWrite(SEG_PIN5, HIGH);
+    turnOn_segment(drop_percentage_pin.HIGH_PIN, drop_percentage_pin.LOW_PIN);
 }
 
 void power_icon()
 {
     // 4 LOW
     // 3 HIGH
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
-    pinMode(SEG_PIN3, OUTPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    digitalWrite(SEG_PIN4, LOW);
-    digitalWrite(SEG_PIN3, HIGH);
+    turnOn_segment(power_icon_pin.HIGH_PIN, power_icon_pin.LOW_PIN);
 }
 
 void drop_icon()
 {
     // 4 LOW
     // 6 HIGH
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN4, OUTPUT);
-    pinMode(SEG_PIN6, OUTPUT);
-    digitalWrite(SEG_PIN4, LOW);
-    digitalWrite(SEG_PIN6, HIGH);
+    turnOn_segment(drop_percentage_pin.HIGH_PIN, drop_percentage_pin.LOW_PIN);
 }
 
 void off()
 {
-    pinMode(SEG_PIN1, INPUT);
-    pinMode(SEG_PIN2, INPUT);
-    pinMode(SEG_PIN3, INPUT);
-    pinMode(SEG_PIN4, INPUT);
-    pinMode(SEG_PIN5, INPUT);
-    pinMode(SEG_PIN6, INPUT);
+    pinMode(D1, INPUT);
+    pinMode(D2, INPUT);
+    pinMode(D5, INPUT);
+    pinMode(D6, INPUT);
+    pinMode(D7, INPUT);
+    pinMode(D4, INPUT);
 }
 
 void display_number(int number)
@@ -334,11 +230,11 @@ void display_number(int number)
 
 void segment_digits(int x, int seg)
 {
-    #ifdef DEBUG
-        Serial.println("F :" + String(__FUNCTION__));
-        Serial.println("number : " + String(x));
-        Serial.println("seg : " + String(seg));
-    #endif
+#ifdef DEBUG
+    Serial.println("F :" + String(__FUNCTION__));
+    Serial.println("number : " + String(x));
+    Serial.println("seg : " + String(seg));
+#endif
     switch (x)
     {
     case 95: // _ special characters
@@ -482,7 +378,7 @@ void segment_digits(int x, int seg)
 
 /**
  * @details -> this function is used to call appropriate function for each segments pixel based on segment argument
- * i not add more pixel for segment 1 because it have only e and f pixel else this can be change the behaviour of display
+ * i have not add more pixel for segment 1 because it have only e and f pixel else this can be change the behaviour of display
  * @arg a -> this is the pixel which will used to called function of
  * @arg seg -> this is the segment which have to call that pixel function
  *
@@ -492,106 +388,131 @@ void segment_digits(int x, int seg)
 
 void pixel_seg(char a, int seg)
 {
-    #ifdef DEBUG
-        Serial.println("\t\tF :" + String(__FUNCTION__));
-        Serial.println("\t\tchar : " + String(a));
-        Serial.println("\t\tseg : " + String(seg));
-    #endif
+#ifdef DEBUG
+    Serial.println("\t\tF :" + String(__FUNCTION__));
+    Serial.println("\t\tchar : " + String(a));
+    Serial.println("\t\tseg : " + String(seg));
+#endif
 
     switch (a)
     {
     case 'a':
         if (seg == 2)
         {
-            a_2();
+            // a_2();
+            turnOn_segment(a_2_pin.HIGH_PIN, a_2_pin.LOW_PIN);
         }
         else if (seg == 3)
         {
-            a_3();
+            // a_3();
+            turnOn_segment(a_3_pin.HIGH_PIN, a_3_pin.LOW_PIN);
         }
         break;
     case 'b':
         if (seg == 2)
         {
-            b_2();
+            // b_2();
+            turnOn_segment(b_2_pin.HIGH_PIN, b_2_pin.LOW_PIN);
         }
         else if (seg == 3)
         {
-            b_3();
+            // b_3();
+            turnOn_segment(b_3_pin.HIGH_PIN, b_3_pin.LOW_PIN);
         }
         break;
     case 'c':
         if (seg == 2)
         {
-            c_2();
+            // c_2();
+            turnOn_segment(c_2_pin.HIGH_PIN, c_2_pin.LOW_PIN);
         }
         else if (seg == 3)
         {
-            c_3();
+            // c_3();
+            turnOn_segment(c_3_pin.HIGH_PIN, c_3_pin.LOW_PIN);
         }
         break;
     case 'd':
         if (seg == 2)
         {
-            d_2();
+            // d_2();
+            turnOn_segment(d_2_pin.HIGH_PIN, d_2_pin.LOW_PIN);
         }
         else if (seg == 3)
         {
-            d_3();
+            // d_3();
+            turnOn_segment(d_3_pin.HIGH_PIN, d_3_pin.LOW_PIN);
         }
         break;
     case 'e':
         if (seg == 1)
         {
-            e_1();
+            // e_1();
+            turnOn_segment(e_1_pin.HIGH_PIN, e_1_pin.LOW_PIN);
         }
         else if (seg == 2)
         {
-            e_2();
+            // e_2();
+            turnOn_segment(e_2_pin.HIGH_PIN, e_2_pin.LOW_PIN);
         }
         else if (seg == 3)
         {
-            e_3();
+            // e_3();
+            turnOn_segment(e_3_pin.HIGH_PIN, e_3_pin.LOW_PIN);
         }
         break;
     case 'f':
         if (seg == 1)
         {
-            f_1();
+            // f_1();
+            turnOn_segment(f_1_pin.HIGH_PIN, f_1_pin.LOW_PIN);
         }
         else if (seg == 2)
         {
-            f_2();
+            // f_2();
+            turnOn_segment(f_2_pin.HIGH_PIN, f_2_pin.LOW_PIN);
         }
         else if (seg == 3)
         {
-            f_3();
+            // f_3();
+            turnOn_segment(f_3_pin.HIGH_PIN, f_3_pin.LOW_PIN);
         }
         break;
     case 'g':
         if (seg == 2)
         {
-            g_2();
+            // g_2();
+            turnOn_segment(g_2_pin.HIGH_PIN, g_2_pin.LOW_PIN);
         }
         else if (seg == 3)
         {
-            g_3();
+            // g_3();
+            turnOn_segment(g_2_pin.HIGH_PIN, g_2_pin.LOW_PIN);
         }
         break;
     }
 }
 
+/**
+ * @details -> this function is used to display a character for each segments pixel based on segment argument
+ * @arg ch -> this is the character which will be displayed on requested segment
+ * @arg seg -> this is the segment which have to display character
+ *
+ * @example : if i pass A as char and seg as 3 it will display that character on that segment
+ * that hence character A on segment 3 will be light up
+ */
+
 void display_char(char ch, int seg)
 {
 
-    #ifdef DEBUG
-        Serial.println("Charater is : " + String(ch));
-        Serial.println("Segment is : " + String(seg));
-    #endif
+#ifdef DEBUG
+    Serial.println("Charater is : " + String(ch));
+    Serial.println("Segment is : " + String(seg));
+#endif
     switch (ch)
     {
     case ' ':
-        delay(1);
+        yield();
         off();
         break;
     case '_':
@@ -711,7 +632,7 @@ void display_char(char ch, int seg)
         delay(1);
         break;
     case 'K':
-        delay(1);
+        yield();
         off();
         break;
     case 'L':
@@ -723,7 +644,7 @@ void display_char(char ch, int seg)
         delay(1);
         break;
     case 'M':
-        delay(1);
+        yield();
         off();
         break;
     case 'N':
@@ -817,15 +738,15 @@ void display_char(char ch, int seg)
         delay(1);
         break;
     case 'V':
-        delay(1);
+        yield();
         off();
         break;
     case 'W':
-        delay(1);
+        yield();
         off();
         break;
     case 'X':
-        delay(1);
+        yield();
         off();
         break;
     case 'Y':
@@ -838,7 +759,7 @@ void display_char(char ch, int seg)
         pixel_seg('g', seg);
         delay(1);
     case 'Z':
-        delay(1);
+        yield();
         off();
         break;
     }
@@ -846,9 +767,9 @@ void display_char(char ch, int seg)
 
 void setup()
 {
-    #ifdef DEBUG
-        Serial.begin(74880);
-    #endif
+#ifdef DEBUG
+    Serial.begin(74880);
+#endif
 }
 
 void charAndIntDecider(char ch, int seg)
@@ -888,15 +809,16 @@ void display_string(String str)
             }
         }
         shift_char = str[idx];
-        #ifdef DEBUG
-            Serial.println("seg 3 " + String(str[idx]));
-            Serial.println("seg 2 " + String(shift_char));
-        #endif
+#ifdef DEBUG
+        Serial.println("seg 3 " + String(str[idx]));
+        Serial.println("seg 2 " + String(shift_char));
+#endif
     }
     off();
 }
 
 void loop()
 {
-    display_string("HELLO_WORLD");
+    // display_string("HELLO_WORLD");
+    Random_effect(5000);
 }
